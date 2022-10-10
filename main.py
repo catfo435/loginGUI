@@ -1,3 +1,4 @@
+from turtle import update
 import pygame
 
 color = pygame.Color
@@ -6,7 +7,9 @@ BLUE = color("blue")
 RED = color("red")
 GREEN = color("green")
 WHITE = color("white")
-BLACK = color("black")  
+BLACK = color("black")
+
+FPS = 60
 
 class TextBox(pygame.Rect):
     
@@ -47,12 +50,16 @@ class TextBox(pygame.Rect):
 
     def update_text(self,event):
         if self.active:
-            if event.key == pygame.K_BACKSLASH:
+            if event.key == pygame.K_BACKSPACE:
                 self.text = self.text[:-1]
+                self.textBox = Font.render(self.text,True,WHITE)
+
                 return
-            self.text += event.unicode if self.w > self.textBox.get_width() + 10 else ''
+            if self.w > self.textBox.get_width() + 10:
+                keySound.play()
+                self.text += event.unicode
         self.textBox = Font.render(self.text,True,WHITE)
-    
+
     def render(self):
         pygame.draw.rect(window,self.get_color(),self,2)
         window.blit(self.textBox,(self.x+5,self.y+10))
@@ -68,10 +75,15 @@ class PassBox(TextBox):
     
     def update_text(self,event):
         if self.active:
-            if event.key == pygame.K_BACKSLASH:
+            if event.key == pygame.K_BACKSPACE:
                 self.text = self.text[:-1]
+                self.starText = "*" * len(self.text)
+                self.textBox = Font.render(self.starText,True,WHITE)
                 return
-            self.text += event.unicode if self.w > self.textBox.get_width() + 10 else ''
+            if self.w > self.textBox.get_width() + 10:
+                keySound.play()
+                self.text += event.unicode
+            
         self.starText = "*" * len(self.text)
         self.textBox = Font.render(self.starText,True,WHITE)
 
@@ -80,6 +92,8 @@ pygame.init()
 
 Font = pygame.font.Font(None,28)
 titleFont = pygame.font.Font(None,32)
+
+keySound = pygame.mixer.Sound(r"./assets/sound/key.mp3")
 
 SPECIAL_KEYS = (pygame.K_ESCAPE,pygame.K_RETURN,pygame.K_DELETE,pygame.K_TAB,pygame.K_CAPSLOCK,
                 pygame.K_LSHIFT,pygame.K_RSHIFT,pygame.K_LCTRL,pygame.K_RCTRL)
@@ -105,8 +119,10 @@ def main():
     pass_box = PassBox(200,300,200,40)
     pass_box.setTitle("Password")
 
-    while open:
+    clock = pygame.time.Clock()
 
+    while open:
+        clock.tick(FPS)
         for event in pygame.event.get():
             match event.type:
                 case pygame.QUIT:
