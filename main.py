@@ -56,7 +56,6 @@ class TextBox(pygame.Rect):
 
                 return
             if self.w > self.textBox.get_width() + 10:
-                keySound.play()
                 self.text += event.unicode
         self.textBox = Font.render(self.text,True,WHITE)
 
@@ -81,7 +80,6 @@ class PassBox(TextBox):
                 self.textBox = Font.render(self.starText,True,WHITE)
                 return
             if self.w > self.textBox.get_width() + 10:
-                keySound.play()
                 self.text += event.unicode
             
         self.starText = "*" * len(self.text)
@@ -92,8 +90,6 @@ pygame.init()
 
 Font = pygame.font.Font(None,28)
 titleFont = pygame.font.Font(None,32)
-
-keySound = pygame.mixer.Sound(r"./assets/sound/key.mp3")
 
 SPECIAL_KEYS = (pygame.K_ESCAPE,pygame.K_RETURN,pygame.K_DELETE,pygame.K_TAB,pygame.K_CAPSLOCK,
                 pygame.K_LSHIFT,pygame.K_RSHIFT,pygame.K_LCTRL,pygame.K_RCTRL)
